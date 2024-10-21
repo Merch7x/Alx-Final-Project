@@ -1,0 +1,44 @@
+name: "Continuous Integration"
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "migrations/"
+      - "*.txt"
+      - "*.md"
+
+  pull_request:
+    branches: [main]
+    paths-ignore:
+      - "migrations/"
+      - "*.txt"
+      - "*.md"
+
+jobs:
+  tests:
+    name: Run unittests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
+      - name: set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: "pip"
+
+      - name: Install dependecies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unittests
+        run: |
+          . venv/bin/activate
+          pytest
