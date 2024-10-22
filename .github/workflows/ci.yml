@@ -54,7 +54,7 @@ jobs:
       - name: Run tests with coverage
         run: |
           . venv/bin/activate
-          pytest --cov=test
+          pytest --cov=App
 
       - name: Upload coverage to Codecov
         run: |
