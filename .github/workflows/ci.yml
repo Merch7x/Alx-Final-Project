@@ -54,9 +54,9 @@ jobs:
       - name: Run tests with coverage
         run: |
           . venv/bin/activate
-          pytest --cov=App
+          pytest --cov=App --cov-report=xml
 
       - name: Upload coverage to Codecov
-        run: |
-          . venv/bin/activate
-          codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
