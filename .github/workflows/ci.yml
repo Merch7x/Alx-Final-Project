@@ -25,20 +25,38 @@ jobs:
       - name: checkout code
         uses: actions/checkout@v4
 
-      - name: set up Python
-        uses: actions/setup-python@v5
+      - name: set up Python and Required packages
+        uses: ./github/actions/setup-python-env.yml
         with:
           python-version: "3.10"
-          cache: "pip"
-
-      - name: Install dependecies
-        run: |
-          python -m venv venv
-          . venv/bin/activate
-          pip install --upgrade pip
-          pip install -r requirements.txt
+          requirements-file: "requirements.txt"
 
       - name: Run unittests
         run: |
           . venv/bin/activate
           pytest
+
+  test-coverage:
+    name: codecov-test_coverage
+    runs-on: ubuntu-latest
+    needs: tests
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: set up Python and Required dependencies
+        uses: ./github/actions/setup-python-env.yml
+        with:
+          python-version: "3.10"
+          requirements-file: "requirements.txt"
+
+      - name: Run tests with coverage
+        run: |
+          . venv/bin/activate
+          pytest --cov=test
+
+      - name: Upload coverage to Codecov
+        run: |
+          . venv/bin/activate
+          codecov
