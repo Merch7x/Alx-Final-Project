@@ -10,7 +10,7 @@ COPY blog.py config.py boot.sh ./
 RUN chmod 755 boot.sh
 
 ENV FLASK_APP blog.py
-# RUN flask translate compile
+RUN flask translate compile
 
 EXPOSE 5000
 ENTRYPOINT [ "./boot.sh" ]
