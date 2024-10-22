@@ -103,9 +103,9 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            merch7x/Final-project-Blog
-            ghcr.io/$${{ github.repository_owner }}/Final-Project-Blog
-            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/final-project-Blog
+            merch7x/flask-blog
+            ghcr.io/$${{ github.repository_owner }}/dev
+            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/flask-blog
           tags: |
             type=semver,pattern={{version}}
 
