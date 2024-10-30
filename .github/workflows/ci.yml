@@ -64,7 +64,7 @@ jobs:
   Build_Publish:
     name: Push Docker image to Docker Hub, GHCR and ECR
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
+    # if: github.ref == 'refs/heads/main'
     permissions:
       packages: write
       contents: read
@@ -81,7 +81,7 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Log in to Github Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -116,5 +116,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
-            latest
           labels: ${{ steps.meta.outputs.labels }}
