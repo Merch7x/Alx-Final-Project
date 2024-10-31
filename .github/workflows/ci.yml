@@ -13,10 +13,10 @@ on:
   pull_request:
     branches: [main]
     paths-ignore:
-      - "migrations/"
+      - "migrations/**"
       - "*.txt"
       - "*.md"
-      - "infra/"
+      - "infra/**"
 
 jobs:
   tests:
