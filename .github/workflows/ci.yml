@@ -9,6 +9,7 @@ on:
       - "*.txt"
       - "*.md"
       - "infra/"
+      - ".github/**"
 
   pull_request:
     branches: [main]
@@ -17,6 +18,7 @@ on:
       - "*.txt"
       - "*.md"
       - "infra/**"
+      - ".github/**"
 
 jobs:
   tests:
