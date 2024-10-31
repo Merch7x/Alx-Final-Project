@@ -8,12 +8,16 @@ on:
       - "migrations/"
       - ".txt"
       - "*.md"
+      - "infra/**"
+      - ".github/**"
   pull_request:
     branches: [main]
     paths-ignore:
       - "migrations/"
       - "*.txt"
       - "*.md"
+      - "infra/**"
+      - ".github/**"
 
 jobs:
   analyze:
