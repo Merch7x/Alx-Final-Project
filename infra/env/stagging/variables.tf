@@ -19,3 +19,7 @@ variable "region" {
 variable "sec_grp_name" {
   description = "security group name"
 }
+
+variable "image" {
+  description = "The image to deploy in the ecs task"
+}

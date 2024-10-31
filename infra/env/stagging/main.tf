@@ -109,7 +109,7 @@ resource "aws_ecs_task_definition" "Blog_task" {
   container_definitions = jsonencode([
     {
       name      = "Blog-container"
-      image     = "merch7x/flask-blog:pr-8"
+      image     = var.image
       memory    = 512
       cpu       = 256
       essential = true
