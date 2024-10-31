@@ -8,6 +8,7 @@ on:
       - "migrations/"
       - "*.txt"
       - "*.md"
+      - "infra/"
 
   pull_request:
     branches: [main]
@@ -15,6 +16,7 @@ on:
       - "migrations/"
       - "*.txt"
       - "*.md"
+      - "infra/"
 
 jobs:
   tests:
@@ -60,62 +62,3 @@ jobs:
         uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-
-  Build_Publish:
-    name: Push Docker image to Docker Hub, GHCR and ECR
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    permissions:
-      packages: write
-      contents: read
-      attestations: write
-      id-token: write
-    steps:
-      - name: Check out the repo
-        uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-          logout: true
-
-      - name: Log in to Github Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          role-to-assume: ${{ secrets.AWS_OICD_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
-
-      - name: Extract metadata (tags, labels) for Docker (Docker Hub, GHCR and ECR)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            merch7x/Final-project-Blog
-            ghcr.io/$${{ github.repository_owner }}/Final-Project-Blog
-            ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/final-project-Blog
-          tags: |
-            type=semver,pattern={{version}}
-
-      - name: Build and push Docker image
-        id: push
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-            latest
-          labels: ${{ steps.meta.outputs.labels }}
