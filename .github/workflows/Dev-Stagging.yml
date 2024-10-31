@@ -29,12 +29,13 @@ jobs:
               pull_number: ${{ github.event.inputs.PR_number }}
             });
 
-            if (response.data.number !== ${{ github.event.inputs.PR_number }}) {
+            if (response.data.state !== 'open') {
               throw new Error('Pull request is not open or number is not valid!');
-            } else {
-              console.log("PR ref: " + response.data.head.ref);
-              return response.data.head.ref;
             }
+
+            console.log("PR ref: " + response.data.head.ref);
+            return response.data.head.ref;
+
     outputs:
       pr_number: ${{ steps.verify_pr_number.outputs.result }}
 
