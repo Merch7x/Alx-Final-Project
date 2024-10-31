@@ -139,7 +139,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const prNumber = context.issue.number || parseInt("${{ github.event.inputs.PR_number }}", 10);
+            const prNumber = parseInt("${{ github.event.inputs.PR_number }}", 10);
             if (!prNumber) {
               throw new Error("Pull request number is missing.");
               }
@@ -166,8 +166,8 @@ jobs:
 
             *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
+            await github.rest.issues.createComment({
+              issue_number: prNumber,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: output
