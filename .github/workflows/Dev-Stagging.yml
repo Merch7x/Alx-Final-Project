@@ -96,6 +96,10 @@ jobs:
     permissions:
       pull-requests: write
     runs-on: ubuntu-latest
+    env:
+      TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      TF_VAR_image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/flask-blog:pr-${{ github.event.inputs.PR_number }}
     steps:
       - name: Checkout infra branch
         uses: actions/checkout@v4
