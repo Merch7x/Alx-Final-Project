@@ -1,1 +1,0 @@
-sec_grp_name = "Blog-default"
