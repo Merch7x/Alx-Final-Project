@@ -22,4 +22,5 @@ variable "sec_grp_name" {
 
 variable "image" {
   description = "The image to deploy in the ecs task"
+  default     = "merch7x/flask-blog:main"
 }
