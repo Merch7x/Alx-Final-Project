@@ -24,7 +24,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(256))
     # sql-alchemy construct 'posts' only exists in the model not db
     posts = db.relationship('Post', backref='author', lazy='dynamic')
-    about_me = db.Column(db.String(140))
+    about_me = db.Column(db.String(256))
     last_seen = db.Column(
         db.DateTime, default=datetime.utcnow)  # revisit
     followed = db.relationship(
