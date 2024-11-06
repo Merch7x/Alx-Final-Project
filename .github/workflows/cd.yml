@@ -2,28 +2,33 @@ name: "Continuous Deployment"
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths-ignore:
-      - "migrations/"
-      - "*.txt"
-      - "*.md"
-      - "infra/"
-      - ".github/**"
+  workflow_run:
+    workflows: ["Continuous Integration"]
+    types:
+      - completed
+  # push:
+  #   branches: [main]
+  #   paths-ignore:
+  #     - "migrations/"
+  #     - "*.txt"
+  #     - "*.md"
+  #     - "infra/"
+  #     - ".github/**"
 
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - "migrations/**"
-      - "*.txt"
-      - "*.md"
-      - "infra/**"
-      - ".github/**"
+  # pull_request:
+  #   branches: [main]
+  #   paths-ignore:
+  #     - "migrations/**"
+  #     - "*.txt"
+  #     - "*.md"
+  #     - "infra/**"
+  #     - ".github/**"
 
 jobs:
   Build_Publish:
     name: Push Docker image to Docker Hub, GHCR and ECR
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     permissions:
       packages: write
       contents: read
