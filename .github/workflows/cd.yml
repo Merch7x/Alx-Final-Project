@@ -71,93 +71,93 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
 
-  Create_Infrastructure:
-    defaults:
-      run:
-        working-directory: infra/env/prod/
-    permissions:
-      pull-requests: write
-    runs-on: ubuntu-latest
-    needs: Build_Publish
-    env:
-      TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      TF_VAR_image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/flask-blog:latest
-    steps:
-      - name: Checkout infra branch
-        uses: actions/checkout@v4
-        with:
-          ref: infra
+  # Create_Infrastructure:
+  #   defaults:
+  #     run:
+  #       working-directory: infra/env/prod/
+  #   permissions:
+  #     pull-requests: write
+  #   runs-on: ubuntu-latest
+  #   needs: Build_Publish
+  #   env:
+  #     TF_VAR_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  #     TF_VAR_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  #     TF_VAR_image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/flask-blog:latest
+  #   steps:
+  #     - name: Checkout infra branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: infra
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.9.2
-          cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
+  #     - name: Setup Terraform
+  #       uses: hashicorp/setup-terraform@v3
+  #       with:
+  #         terraform_version: 1.9.2
+  #         cli_config_credentials_token: ${{ secrets.TERRAFORM_API_TOKEN }}
 
-      - name: Terraform fmt
-        id: fmt
-        run: terraform fmt -check
-        continue-on-error: true
+  #     - name: Terraform fmt
+  #       id: fmt
+  #       run: terraform fmt -check
+  #       continue-on-error: true
 
-      - name: Terraform Init
-        id: init
-        run: terraform init
+  #     - name: Terraform Init
+  #       id: init
+  #       run: terraform init
 
-      - name: Terraform Validate
-        id: validate
-        run: terraform validate -no-color
+  #     - name: Terraform Validate
+  #       id: validate
+  #       run: terraform validate -no-color
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color
-        continue-on-error: true
+  #     - name: Terraform Plan
+  #       id: plan
+  #       run: terraform plan -no-color
+  #       continue-on-error: true
 
-      # - name: Update PR
-      #   uses: actions/github-script@v7
-      #   env:
-      #     PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
-      #     script: |
-      #       const prNumber = parseInt("${{ github.event.inputs.PR_number }}", 10);
-      #       if (!prNumber) {
-      #         throw new Error("Pull request number is missing.");
-      #         }
-      #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
-      #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
-      #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
-      #       <details><summary>Validation Output</summary>
+  #     # - name: Update PR
+  #     #   uses: actions/github-script@v7
+  #     #   env:
+  #     #     PLAN: "terraform\n${{ steps.plan.outputs.stdout }}"
+  #     #   with:
+  #     #     github-token: ${{ secrets.GITHUB_TOKEN }}
+  #     #     script: |
+  #     #       const prNumber = parseInt("${{ github.event.inputs.PR_number }}", 10);
+  #     #       if (!prNumber) {
+  #     #         throw new Error("Pull request number is missing.");
+  #     #         }
+  #     #       const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+  #     #       #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+  #     #       #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+  #     #       <details><summary>Validation Output</summary>
 
-      #       \`\`\`\n
-      #       ${{ steps.validate.outputs.stdout }}
-      #       \`\`\`
+  #     #       \`\`\`\n
+  #     #       ${{ steps.validate.outputs.stdout }}
+  #     #       \`\`\`
 
-      #       </details>
+  #     #       </details>
 
-      #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
+  #     #       #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
-      #       <details><summary>Show Plan</summary>
+  #     #       <details><summary>Show Plan</summary>
 
-      #       \`\`\`\n
-      #       ${process.env.PLAN}
-      #       \`\`\`
+  #     #       \`\`\`\n
+  #     #       ${process.env.PLAN}
+  #     #       \`\`\`
 
-      #       </details>
+  #     #       </details>
 
-      #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
+  #     #       *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`*`;
 
-      #       await github.rest.issues.createComment({
-      #         issue_number: prNumber,
-      #         owner: context.repo.owner,
-      #         repo: context.repo.repo,
-      #         body: output
-      #       })
+  #     #       await github.rest.issues.createComment({
+  #     #         issue_number: prNumber,
+  #     #         owner: context.repo.owner,
+  #     #         repo: context.repo.repo,
+  #     #         body: output
+  #     #       })
 
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
+  #     - name: Terraform Plan Status
+  #       if: steps.plan.outcome == 'failure'
+  #       run: exit 1
 
-      - name: Terraform Apply
-        id: apply
-        run: terraform apply -auto-approve
+  #     - name: Terraform Apply
+  #       id: apply
+  #       run: terraform apply -auto-approve
