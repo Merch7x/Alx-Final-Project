@@ -1,10 +1,13 @@
-# data "aws_ecs_task" "example" {
-#   cluster  = aws_ecs_cluster.my_cluster.id
-#   task_arn = aws_ecs_service.my_service.task_definition
-#   # Adjust the above as per your ECS service and task
-# }
+data "aws_network_interface" "fargate_task_eni" {
+  count = 1
+  filter {
+    name   = "subnet-id"
+    values = [module.vpc.subnet_id]
+  }
+}
 
-# output "container_public_ip" {
-#   description = "The public IP address of the ECS container"
-#   value       = data.aws_ecs_task.example.network_interfaces[0].association.public_ip
-# }
+
+output "fargate_public_ip" {
+  value       = data.aws_network_interface.fargate_task_eni[0].association[0].public_ip
+  description = "Public IP address of the Fargate task."
+}
